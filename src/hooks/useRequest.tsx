@@ -5,16 +5,15 @@ interface Config<D> extends AxiosRequestConfig<D> {
     url: string;
 }
 
-type ResultData<Q, R> = {
-    isLoading: boolean;
-    response: R | null;
-    errorMsg: Error | null;
-    load: (data: Q) => void;
-};
+type ResultData<Q, R> = [boolean, R | null, Error | null, (data: Q) => void];
 
 const initialParams: AxiosRequestConfig = {
     method: "post",
     responseType: "json",
+    headers: {
+        accept: "application/vnd.github+json",
+        // Authorization: `Basic ${btoa(`uryashnik:Dsf3f3f3@@`)}`,
+    },
 };
 
 export function useRequest<QueryParams, Response>(
@@ -54,10 +53,11 @@ export function useRequest<QueryParams, Response>(
                         query.push(`${key}=${data[key]}`);
                     }
                     response = await axios.get<Response>(
-                        params.url + (query.length ? `?${query.join("&")}` : "")
+                        params.url +
+                            (query.length ? `?${query.join("&")}` : ""),
+                        params
                     );
                 }
-
                 setResponse(response.data);
                 console.log(params);
             } catch (e) {
@@ -72,5 +72,5 @@ export function useRequest<QueryParams, Response>(
         [params]
     );
 
-    return { isLoading, response, errorMsg, load };
+    return [isLoading, response, errorMsg, load];
 }
