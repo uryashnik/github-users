@@ -15,10 +15,7 @@ const Application = ({}: Props) => {
         <Router>
             <main className={css.root}>
                 <Routes>
-                    <Route path="/users" element={<Users />}>
-                        <Route path=":mode" element={<Details />} />
-                        <Route path=":userId" element={<Details />} />
-                    </Route>
+                    <Route path="/users/*" element={<Users />}></Route>
                     <Route path="*" element={<p>404 page not found</p>} />
                 </Routes>
             </main>

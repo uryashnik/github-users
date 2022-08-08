@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, ChangeEvent, useMemo } from "react";
 import { useRequest } from "../../../hooks/useRequest";
-import { Users, User, Repository } from "./main";
+import { Users, User, UserDetails } from "./main";
 import debounce from "lodash.debounce";
 import Preview from "./preview";
 import { useRequestAll } from "../../../hooks/useRequestAll";
@@ -16,19 +16,13 @@ export type Data = {
 };
 
 interface IProps {
-    onSuccess: (collection: Users) => void;
+    list: UserDetails[];
+    onSuccess: (collection: UserDetails[]) => void;
 }
 
-function parser(response: ResponseUsers): Users {
-    const result: Users = {};
-    response.items.forEach((user) => (result[user.login] = user));
-    return result;
-}
-
-const Form = ({ onSuccess }: IProps) => {
-    const [data, setData] = useState<Users>({});
+const Form = ({ onSuccess, list }: IProps) => {
     const [query, setQuery] = useState("");
-    const [isLoadingUsers, responseUser, errorMsg, load] = useRequest<
+    const [isLoadingUsers, users, errorUser, load] = useRequest<
         Data,
         ResponseUsers
     >(
@@ -38,21 +32,27 @@ const Form = ({ onSuccess }: IProps) => {
         },
         false
     );
-    const [isLoadingRepos, repos, errorRepos, loadAll] = useRequestAll<
-        Repository[]
-    >({
-        url: "https://api.github.com/users/nickname/repos",
-    });
-    const users = useMemo(() => {
-        const result: Users = {};
-        responseUser?.items.forEach((user) => (result[user.login] = user));
-        return result ? result : null;
-    }, [responseUser]);
+    const [isLoadingExtendedInfo, extendedInfo, errorExtendedInfo, loadAll] =
+        useRequestAll<UserDetails>({
+            url: "https://api.github.com/users/nickname",
+        });
 
     const sendQuery = useCallback(
-        debounce((query) => load({ q: query }), 300),
-        []
+        debounce((query) => {
+            load({ q: query });
+            onSuccess([]);
+        }, 300),
+        [onSuccess]
     );
+
+    const fetchExtendedInfo = () => {
+        const queryParams = users?.items.map((user) => ({
+            nick: user.login,
+        }));
+        if (queryParams?.length) {
+            loadAll(queryParams);
+        }
+    };
 
     useEffect(() => {
         if (query) {
@@ -62,28 +62,15 @@ const Form = ({ onSuccess }: IProps) => {
 
     useEffect(() => {
         if (users) {
-            const data = Object.keys(users).map((key) => ({ nick: key }));
-            loadAll(data);
+            fetchExtendedInfo();
         }
     }, [users]);
 
     useEffect(() => {
-        if (repos) {
-            console.log("effect repos prepeare");
-
-            const result: Users = { ...users };
-            repos.forEach((items) => {
-                const login = items[0].owner.login;
-                if (login && result[login]) {
-                    result[login].repos = items;
-                }
-            });
-            console.log("prepeare repos: ", result);
-
-            setData(result);
-            onSuccess(result);
+        if (extendedInfo) {
+            onSuccess(extendedInfo);
         }
-    }, [repos]);
+    }, [extendedInfo]);
 
     return (
         <>
@@ -93,16 +80,32 @@ const Form = ({ onSuccess }: IProps) => {
                     setQuery(e.target.value)
                 }
             />
-            {data
-                ? Object.values(data).map((user) => (
-                      <Preview
-                          key={user.id}
-                          avatar={user.avatar_url}
-                          login={user.login}
-                          repositories={user.repos?.length || 0}
-                      />
-                  ))
-                : null}
+            {isLoadingUsers || isLoadingExtendedInfo ? (
+                "Loading..."
+            ) : errorUser ? (
+                <div>
+                    <div>{errorUser.message}</div>
+                    <button onClick={() => load({ q: query })}>
+                        Повторить
+                    </button>
+                </div>
+            ) : errorExtendedInfo ? (
+                <div>
+                    <div>{errorExtendedInfo.message}</div>
+                    <button onClick={() => fetchExtendedInfo()}>
+                        Повторить
+                    </button>
+                </div>
+            ) : list ? (
+                list.map((user) => (
+                    <Preview
+                        key={user.id}
+                        avatar={user.avatar_url}
+                        login={user.login}
+                        repositories={user.public_repos || 0}
+                    />
+                ))
+            ) : null}
         </>
     );
 };

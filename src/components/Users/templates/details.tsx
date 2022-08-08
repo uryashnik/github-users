@@ -1,25 +1,28 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useRequestAll } from "../../../hooks/useRequestAll";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { UserDetails } from "./main";
 
 interface IProps {
-    [index: string]: string;
+    list: UserDetails[];
 }
 
-const Details = ({}: IProps) => {
-    // const { isLoading, response, error, loadAll } = useRequestAll({
-    //     url: "https://api.github.com/users/nickname/repos",
-    // });
-    // useEffect(() => {
-    //     console.log("useEffect");
-    //     loadAll([
-    //         { nick: "urys" },
-    //         { nick: "urysarabia" },
-    //         { nick: "uryswk" },
-    //         { nick: "uryashnik" },
-    //     ]);
-    // }, []);
-    return <div>User Details</div>;
+const Details = ({ list }: IProps) => {
+    const { login } = useParams();
+    const navigate = useNavigate();
+    const current = list.find((user) => user.login === login);
+
+    useEffect(() => {
+        if (!current) {
+            navigate("/users");
+        }
+    }, [current]);
+
+    return (
+        <div>
+            <div>User Details</div>
+            <div>{current ? <div></div> : null}</div>
+        </div>
+    );
 };
 
 export default Details;

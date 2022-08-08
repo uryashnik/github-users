@@ -1,15 +1,10 @@
-import {
-    useState,
-    useEffect,
-    useCallback,
-    SyntheticEvent,
-    ChangeEvent,
-} from "react";
-import { useParams } from "react-router-dom";
+import { useState, useCallback } from "react";
+import { Route, Routes, useParams } from "react-router-dom";
 import css from "../scss/index.module.scss";
 import { Outlet } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import Search from "./search";
+import Details from "./details";
 
 export type Repository = {
     id: number;
@@ -117,7 +112,7 @@ export type Repository = {
     default_branch: string;
 };
 
-export type User = {
+export interface User {
     login: string;
     id: number;
     node_id: string;
@@ -137,35 +132,69 @@ export type User = {
     type: string;
     site_admin: boolean;
     score: string;
-    repos?: Repository[];
-};
+}
 
 export type Users = {
-    [index: string]: User;
+    [index: string]: UserDetails;
+};
+
+export type UserDetails = {
+    login: string;
+    id: number;
+    node_id: string;
+    avatar_url: string;
+    gravatar_id: string;
+    url: string;
+    html_url: string;
+    followers_url: string;
+    following_url: string;
+    gists_url: string;
+    starred_url: string;
+    subscriptions_url: string;
+    organizations_url: string;
+    repos_url: string;
+    events_url: string;
+    received_events_url: string;
+    type: string;
+    site_admin: boolean;
+    name: string;
+    company: string;
+    blog: string;
+    location: string;
+    email: string;
+    hireable: string;
+    bio: string;
+    twitter_username: string;
+    public_repos: number;
+    public_gists: number;
+    followers: number;
+    following: number;
+    created_at: string;
+    updated_at: string;
 };
 
 const Users = () => {
-    const { mode, userId } = useParams();
+    const { login } = useParams();
     const navigate = useNavigate();
-    const [users, setUsers] = useState<Users>({});
-    const handleUser = useCallback((users: Users) => setUsers(users), []);
+    const [users, setUsers] = useState<UserDetails[]>([]);
+    const handleUser = useCallback(
+        (users: UserDetails[]) => setUsers(users),
+        []
+    );
 
-    useEffect(() => {
-        if (users) {
-        }
-    }, [users]);
-    console.log(mode, userId);
     return (
         <div className={css.root}>
             Users
-            <Search onSuccess={handleUser} />
+            <Routes>
+                <Route
+                    path="/"
+                    element={<Search onSuccess={handleUser} list={users} />}
+                />
+                <Route path=":login" element={<Details list={users} />} />
+            </Routes>
             <Outlet />
         </div>
     );
 };
 
 export default Users;
-
-// useEffect(() => {
-//     if (userId && !users.length) navigate("/users");
-// }, []);
