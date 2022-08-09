@@ -20,7 +20,6 @@ export function useRequestAll<R>(
     });
 
     const loadAll = useCallback(async (datas: Data[]) => {
-        console.log("start useRequestAll");
         setState((prev) => ({ ...prev, isLoading: true }));
         try {
             const promises = datas.map((data) =>

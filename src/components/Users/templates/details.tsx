@@ -180,26 +180,34 @@ const Details = ({ list }: IProps) => {
                                 />
                                 {filtered?.length ? (
                                     <table>
-                                        {filtered.map((repo) => (
-                                            <tr
-                                                className={css.repository}
-                                                key={repo.id}
-                                            >
-                                                <td className={css.name}>
-                                                    {repo.name}
-                                                </td>
-                                                <td className={css.stats}>
-                                                    <div className={css.item}>
-                                                        {repo.forks_count}
-                                                        &nbsp;Forks
-                                                    </div>
-                                                    <div className={css.item}>
-                                                        {repo.stargazers_count}
-                                                        &nbsp;Stars
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
+                                        <tbody>
+                                            {filtered.map((repo) => (
+                                                <tr
+                                                    className={css.repository}
+                                                    key={repo.id}
+                                                >
+                                                    <td className={css.name}>
+                                                        {repo.name}
+                                                    </td>
+                                                    <td className={css.stats}>
+                                                        <div
+                                                            className={css.item}
+                                                        >
+                                                            {repo.forks_count}
+                                                            &nbsp;Forks
+                                                        </div>
+                                                        <div
+                                                            className={css.item}
+                                                        >
+                                                            {
+                                                                repo.stargazers_count
+                                                            }
+                                                            &nbsp;Stars
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
                                     </table>
                                 ) : (
                                     " No results"

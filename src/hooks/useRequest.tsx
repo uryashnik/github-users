@@ -36,7 +36,6 @@ export function useRequest<QueryParams, Response>(
                 if (isClearpreviousResponseData) {
                     setResponse(null);
                 }
-                console.log(params);
                 let response: AxiosResponse<Response, QueryParams>;
                 if (params.method === "post") {
                     response = await axios.post<Response>(
@@ -58,11 +57,9 @@ export function useRequest<QueryParams, Response>(
                     );
                 }
                 setResponse(response.data);
-                console.log(params);
             } catch (e) {
                 if (e instanceof Error) {
                     setErrorMsg(e);
-                    console.log(e);
                 }
             } finally {
                 setIsLoading(false);
