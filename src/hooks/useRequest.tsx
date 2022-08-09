@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, FunctionComponent } from "react";
+import { useState, useMemo, useCallback } from "react";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 interface Config<D> extends AxiosRequestConfig<D> {
@@ -12,7 +12,6 @@ const initialParams: AxiosRequestConfig = {
     responseType: "json",
     headers: {
         accept: "application/vnd.github+json",
-        // Authorization: `Basic ${btoa(`uryashnik:Dsf3f3f3@@`)}`,
     },
 };
 

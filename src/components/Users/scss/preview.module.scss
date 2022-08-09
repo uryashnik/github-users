@@ -1,9 +1,23 @@
 .root {
-    padding: 8px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid black;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    &:hover {
+        background-color: rgba(0,0,0, 0.05);
+    }
 }
 
 .image {
     border-radius: 50%;
     width: 40px;
     height: 40px;
+    margin-right: 40px;
+}
+
+.login {
+    flex-grow: 1;
+    margin-right: 40px;
 }

@@ -13,8 +13,8 @@ const Preview = ({ avatar, login, repositories }: IProps) => {
     return (
         <div className={css.root} onClick={() => navigate(`/users/${login}`)}>
             <img className={css.image} src={avatar} alt="avatar" />
-            <span>Пользователь: {login}</span>
-            <span>repositoties: {repositories}</span>
+            <span className={css.login}>{login}</span>
+            <span>Repo: {repositories}</span>
         </div>
     );
 };

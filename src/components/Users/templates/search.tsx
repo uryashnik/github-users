@@ -1,9 +1,32 @@
-import { useState, useEffect, useCallback, ChangeEvent, useMemo } from "react";
+import { useState, useEffect, useCallback, ChangeEvent } from "react";
 import { useRequest } from "../../../hooks/useRequest";
-import { Users, User, UserDetails } from "./main";
+import { UserDetails } from "./main";
 import debounce from "lodash.debounce";
 import Preview from "./preview";
 import { useRequestAll } from "../../../hooks/useRequestAll";
+import css from "../scss/search.module.scss";
+
+export interface User {
+    login: string;
+    id: number;
+    node_id: string;
+    avatar_url: string;
+    gravatar_id: string;
+    url: string;
+    html_url: string;
+    followers_url: string;
+    following_url: string;
+    gists_url: string;
+    starred_url: string;
+    subscriptions_url: string;
+    organizations_url: string;
+    repos_url: string;
+    events_url: string;
+    received_events_url: string;
+    type: string;
+    site_admin: boolean;
+    score: string;
+}
 
 export type ResponseUsers = {
     total_count: number;
@@ -12,7 +35,7 @@ export type ResponseUsers = {
 };
 
 export type Data = {
-    q?: string;
+    q: string;
 };
 
 interface IProps {
@@ -73,8 +96,9 @@ const Form = ({ onSuccess, list }: IProps) => {
     }, [extendedInfo]);
 
     return (
-        <>
+        <div>
             <input
+                className={css.input}
                 type="text"
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     setQuery(e.target.value)
@@ -106,7 +130,7 @@ const Form = ({ onSuccess, list }: IProps) => {
                     />
                 ))
             ) : null}
-        </>
+        </div>
     );
 };
 

@@ -1,7 +1,5 @@
 import { useCallback, useState } from "react";
 import axios, { AxiosRequestConfig } from "axios";
-import getParams from "../utils/getParams";
-import Preview from "../components/Users/templates/preview";
 
 type State<R> = { isLoading: boolean; data: R[] | null; error: null | Error };
 type Data = {
